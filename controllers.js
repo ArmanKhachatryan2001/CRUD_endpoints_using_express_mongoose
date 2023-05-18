@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 const Model = require('./model');
 const crypto = require('crypto');
 
-async function createdata(req, res) {
+async function createdata(req, res)
+{
     const {
             name, surname, age,
             email, gender, address,
-            phone_number, registration_date,
-            password
+            phone_number, registration_date
           } = req.body;
           
     const hash = crypto.createHash('sha256');
@@ -25,26 +25,41 @@ async function createdata(req, res) {
     res.send('posted');
 }
 
-async function updatedata(req, res) {
-    const upid = req.params.id;  
+function updatefields(reqbody)
+{
     const {
-            name: upname, surname: upsurname, age: upage,
-            email: upemail, gender: upgender, address: upaddress,
-            phone_number: upphone_number, registration_date: upregistration_date
-          } = req.body;
-    const hash = crypto.createHash('sha256');
-    const password = req.body.password.toString();
-    const hashedpassword = hash.update(password).digest('hex');
-    let uppassword = hashedpassword;
+            name, surname, age,
+            email, gender, address,
+            phone_number, registration_date, password
+          } = reqbody;
+
+    const fieldsupdate = {};
+
+    if (name) { fieldsupdate.name = name; }
+    if (surname) { fieldsupdate.surname = surname; }
+    if (age) { fieldsupdate.age = age; }
+    if (email) { fieldsupdate.email = email; }
+    if (gender) { fieldsupdate.gender = gender; }
+    if (address) { fieldsupdate.address = address; }
+    if (phone_number) { fieldsupdate.phone_number = phone_number; }
+    if (registration_date) { fieldsupdate.registration_date = registration_date; }
+    if (password) {
+        const hash = crypto.createHash('sha256');
+        const password = reqbody.password.toString();
+        const uppassword = hash.update(password).digest('hex');
+        fieldsupdate.password = uppassword;
+    }
+    return fieldsupdate;
+}
+
+async function updatedata(req, res)
+{
+    const upid = req.params.id;  
+    const updatedata = updatefields(req.body);
 
     const data = await Model.findOneAndUpdate(
         {_id: upid},
-        {$set: {
-                name: upname, surname: upsurname, age: upage,
-                email: upemail, gender: upgender, address: upaddress,
-                phone_number: upphone_number, registration_date: upregistration_date,
-                password: uppassword}
-        },
+        {$set: updatedata},
         {new: true}
     );
 
@@ -55,7 +70,8 @@ async function updatedata(req, res) {
     }
 }
 
-async function deletedata(req, res) {
+async function deletedata(req, res)
+{
     const delid = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(delid)) {
         res.send('invalid id');
@@ -69,7 +85,8 @@ async function deletedata(req, res) {
     }
 }
 
-async function fetchdata(req, res) {
+async function fetchdata(req, res) 
+{
     const excludeduserid = req.params.id;
     const data = await Model.find({_id: excludeduserid}, '-_id -__v -password');
 
