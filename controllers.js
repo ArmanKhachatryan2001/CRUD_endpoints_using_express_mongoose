@@ -21,7 +21,7 @@ async function createdata(req, res)
         password: hashedpassword
     });
 
-    const val = await data.save();
+    await data.save();
     res.send('posted');
 }
 
