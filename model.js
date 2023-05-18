@@ -4,6 +4,11 @@ const schema = new mongoose.Schema({
     name: String,
     surname: String,
     age: Number,
+    email: String,
+    gender: String,
+    address: String,
+    phone_number: Number,
+    registration_date: String,
     password: String
 });
 

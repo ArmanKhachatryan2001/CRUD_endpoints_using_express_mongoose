@@ -3,14 +3,21 @@ const Model = require('./model');
 const crypto = require('crypto');
 
 async function createdata(req, res) {
+    const {
+            name, surname, age,
+            email, gender, address,
+            phone_number, registration_date,
+            password
+          } = req.body;
+          
     const hash = crypto.createHash('sha256');
-    const password = req.body.password.toString();
-    const hashedpassword = hash.update(password).digest('hex');
+    const hashpassword = req.body.password.toString();
+    const hashedpassword = hash.update(hashpassword).digest('hex');
     
     const data = new Model({
-        name: req.body.name,
-        surname: req.body.surname,
-        age: req.body.age,
+        name, surname, age,
+        email, gender, address,
+        phone_number, registration_date,
         password: hashedpassword
     });
 
@@ -20,10 +27,11 @@ async function createdata(req, res) {
 
 async function updatedata(req, res) {
     const upid = req.params.id;  
-    let upname = req.body.name;
-    let upsurname = req.body.surname;
-    let upage = req.body.age;
-
+    const {
+            name: upname, surname: upsurname, age: upage,
+            email: upemail, gender: upgender, address: upaddress,
+            phone_number: upphone_number, registration_date: upregistration_date
+          } = req.body;
     const hash = crypto.createHash('sha256');
     const password = req.body.password.toString();
     const hashedpassword = hash.update(password).digest('hex');
@@ -31,7 +39,12 @@ async function updatedata(req, res) {
 
     const data = await Model.findOneAndUpdate(
         {_id: upid},
-        {$set: {name: upname, surname: upsurname, age: upage, password: uppassword}},
+        {$set: {
+                name: upname, surname: upsurname, age: upage,
+                email: upemail, gender: upgender, address: upaddress,
+                phone_number: upphone_number, registration_date: upregistration_date,
+                password: uppassword}
+        },
         {new: true}
     );
 
