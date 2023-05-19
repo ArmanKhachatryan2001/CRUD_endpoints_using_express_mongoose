@@ -3,7 +3,6 @@ const Model = require('./model');
 const utils = require('./utils');
 
 async function createdata(req, res) {
-
     const correctdata = utils.createcorrectdata(req.body, res);
       
     if (correctdata) {
@@ -11,6 +10,8 @@ async function createdata(req, res) {
         await data.save();
         res.send('posted');
     }
+    await data.save();
+    res.send('posted');
 }
 
 async function updatealldata(req, res)
