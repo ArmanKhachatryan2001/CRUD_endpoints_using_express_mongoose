@@ -1,4 +1,4 @@
-# User Management System API Documentation
+# Express mongoose api Documentation
 The User Management System is a Node.js-based API built with Express and MongoDB. It allows users to perform CRUD operations on user records, including creating, updating, retrieving, and deleting user information. The API also incorporates authentication to ensure secure access to user data.
 ## Table of Contents
 - [Installation](#installation)
