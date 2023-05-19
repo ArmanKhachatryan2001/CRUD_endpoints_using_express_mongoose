@@ -25,14 +25,14 @@ The API will be available at `http://localhost:9999` by default.
 - **Endpoint:** `POST /post`
 - **Description:** Create a new user record.
 - **Request Body:**
-  - `firstName` (string): First name of the user.
-  - `lastName` (string): Last name of the user.
+  - `name` (string): First name of the user.
+  - `surname` (string): Last name of the user.
   - `age` (number): Age of the user.
   - `email` (string): Email address of the user.
   - `gender` (string): Gender of the user.
   - `address` (string): Address of the user.
-  - `phoneNumber` (string): Phone number of the user.
-  - `registrationDate` (string): Registration date of the user.
+  - `phone_Number` (string): Phone number of the user.
+  - `registration_Date` (string): Registration date of the user.
   - `password` (string): Password of the user (will be stored hashed in the database).
 - **Response:**
   - Body: JSON object representing the created user.
