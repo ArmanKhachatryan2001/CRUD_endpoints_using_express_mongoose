@@ -1,72 +1,54 @@
 const mongoose = require('mongoose');
 const Model = require('./model');
-const crypto = require('crypto');
+const utils = require('./utils');
 
-async function createdata(req, res)
-{
-    const {
-            name, surname, age,
-            email, gender, address,
-            phone_number, registration_date
-          } = req.body;
-          
-    const hash = crypto.createHash('sha256');
-    const hashpassword = req.body.password.toString();
-    const hashedpassword = hash.update(hashpassword).digest('hex');
-    
-    const data = new Model({
-        name, surname, age,
-        email, gender, address,
-        phone_number, registration_date,
-        password: hashedpassword
-    });
-
+async function createdata(req, res) {
+    const correctdata = utils.createcorrectdata(req.body, res);
+      
+    if (correctdata) {
+        const data = new Model(correctdata);
+        await data.save();
+        res.send('posted');
+    }
     await data.save();
     res.send('posted');
 }
 
-function updatefields(reqbody)
+async function updatealldata(req, res)
 {
-    const {
-            name, surname, age,
-            email, gender, address,
-            phone_number, registration_date, password
-          } = reqbody;
+    const upid = req.params.id;
+    const changealldata = utils.createcorrectdata(req.body, res);
+    if (changealldata) {
+        const data = await Model.findOneAndUpdate(
+            { _id: upid },   
+            {$set: changealldata},
+            {new: true}
+        );
 
-    const fieldsupdate = {};
-
-    if (name) { fieldsupdate.name = name; }
-    if (surname) { fieldsupdate.surname = surname; }
-    if (age) { fieldsupdate.age = age; }
-    if (email) { fieldsupdate.email = email; }
-    if (gender) { fieldsupdate.gender = gender; }
-    if (address) { fieldsupdate.address = address; }
-    if (phone_number) { fieldsupdate.phone_number = phone_number; }
-    if (registration_date) { fieldsupdate.registration_date = registration_date; }
-    if (password) {
-        const hash = crypto.createHash('sha256');
-        const password = reqbody.password.toString();
-        const uppassword = hash.update(password).digest('hex');
-        fieldsupdate.password = uppassword;
+        if (data === null) {
+            res.send('No update occurred');
+        } else {
+            res.send(data);
+        }
     }
-    return fieldsupdate;
 }
 
 async function updatedata(req, res)
 {
-    const upid = req.params.id;  
-    const updatedata = updatefields(req.body);
+    const updatedata = utils.updatefields(req.body, res);
+    if (updatedata) {
+        const upid = req.params.id; 
+        const data = await Model.findOneAndUpdate(
+            {_id: upid},
+            {$set: updatedata},
+            {new: true}
+        );
 
-    const data = await Model.findOneAndUpdate(
-        {_id: upid},
-        {$set: updatedata},
-        {new: true}
-    );
-
-    if (data == null) {
-        res.send('no update occurred');
-    } else {
-        res.send('update has taken place');
+        if (data == null) {
+            res.send('no update occurred');
+        } else {
+            res.send('update has taken place');
+        }
     }
 }
 
@@ -99,6 +81,7 @@ async function fetchdata(req, res)
 
 module.exports = {
     createdata,
+    updatealldata,
     updatedata,
     deletedata,
     fetchdata
